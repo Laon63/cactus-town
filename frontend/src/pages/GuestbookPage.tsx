@@ -28,8 +28,20 @@ function GuestbookPage() {
 
         const decrypted = encryptedMessages.map((msg): DecryptedMessage => {
           try {
-            const encryptedContentBytes = naclUtil.decodeBase64(msg.encryptedContent);
-            const decryptedContentBytes = nacl.box.seal.open(encryptedContentBytes, ownerPublicKey, decryptedSecretKey);
+            const fullPayload = naclUtil.decodeBase64(msg.encryptedContent);
+
+            // Extract the ephemeral public key, nonce, and message
+            const ephemeralPublicKey = fullPayload.slice(0, nacl.box.publicKeyLength);
+            const nonce = fullPayload.slice(nacl.box.publicKeyLength, nacl.box.publicKeyLength + nacl.box.nonceLength);
+            const encryptedContentBytes = fullPayload.slice(nacl.box.publicKeyLength + nacl.box.nonceLength);
+
+            const decryptedContentBytes = nacl.box.open(
+              encryptedContentBytes,
+              nonce,
+              ephemeralPublicKey,
+              decryptedSecretKey
+            );
+
             if (!decryptedContentBytes) throw new Error('Decryption failed');
             const decryptedContent = naclUtil.encodeUTF8(decryptedContentBytes);
             return { ...msg, decryptedContent };

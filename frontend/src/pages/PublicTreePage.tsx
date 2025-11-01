@@ -38,9 +38,32 @@ function PublicTreePage() {
     }
 
     try {
+      // Create an ephemeral keypair for the sender
+      const ephemeralKeyPair = nacl.box.keyPair();
+
+      // Use a shared nonce (or generate a random one and include it in the payload)
+      // For simplicity, we are not including a random nonce in this sealed box.
+      // A robust implementation would.
+      const nonce = nacl.randomBytes(nacl.box.nonceLength);
+
+      // Encrypt the message
       const messageBytes = naclUtil.decodeUTF8(message);
-      const encryptedContent = nacl.box.seal(messageBytes, ownerPublicKey);
-      const encryptedContentBase64 = naclUtil.encodeBase64(encryptedContent);
+      const encryptedMessage = nacl.box(
+        messageBytes,
+        nonce,
+        ownerPublicKey,
+        ephemeralKeyPair.secretKey
+      );
+
+      // Create the full payload: ephemeral public key + nonce + encrypted message
+      const fullPayload = new Uint8Array(ephemeralKeyPair.publicKey.length + nonce.length + encryptedMessage.length);
+      fullPayload.set(ephemeralKeyPair.publicKey);
+      fullPayload.set(nonce, ephemeralKeyPair.publicKey.length);
+      fullPayload.set(encryptedMessage, ephemeralKeyPair.publicKey.length + nonce.length);
+
+      const encryptedContentBase64 = naclUtil.encodeBase64(fullPayload);
+
+      // Post the encrypted payload
 
       const response = await fetch(`http://localhost:3001/api/trees/${userId}/messages`, {
         method: 'POST',
