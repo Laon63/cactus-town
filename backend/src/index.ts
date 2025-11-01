@@ -189,42 +189,47 @@ app.post('/api/trees/:userId/messages', async (req: Request, res: Response) => {
 
   await db.read();
   if (!db.data) return res.status(500).send({ message: "Database not initialized" });
-  const newMessage: Message = {
-    id: nanoid(),
-    treeOwnerId: userId,
-    encryptedContent: encryptedContent,
-    authorName: authorName || 'Anonymous',
-    createdAt: new Date().toISOString(),
-  };
-  db.data.messages.push(newMessage);
-  await db.write();
-  res.status(201).send({ message: "Message posted successfully!" });
-});
-
-// Middleware to authenticate JWT
-const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
-    if (err) return res.sendStatus(403);
-    req.user = user as { userId: string };
-    next();
+    const newMessage: Message = {
+      id: nanoid(),
+      treeOwnerId: userId,
+      encryptedContent: encryptedContent,
+      authorName: authorName || 'Anonymous',
+      createdAt: new Date().toISOString(),
+    };
+    db.data.messages.push(newMessage);
+    await db.write();
+  
+    console.log(`[Log] New message posted to tree of user: ${userId}`);
+  
+    res.status(201).send({ message: "Message posted successfully!" });
   });
-};
-
-// Get messages for the logged-in user
-app.get('/api/guestbook/messages', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
-  const user = req.user;
-  if (!user) return res.status(401).send({ message: "Authentication error" });
   
-  await db.read();
-  if (!db.data) return res.status(500).send({ message: "Database not initialized" });
+  // Middleware to authenticate JWT
+  const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token == null) return res.sendStatus(401);
   
-  const messages = db.data.messages.filter(m => m.treeOwnerId === user.userId);
-  res.send(messages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-});
+    jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
+      if (err) return res.sendStatus(403);
+      req.user = user as { userId: string };
+      next();
+    });
+  };
+  
+  // Get messages for the logged-in user
+  app.get('/api/guestbook/messages', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+    const user = req.user;
+    if (!user) return res.status(401).send({ message: "Authentication error" });
+    
+    await db.read();
+    if (!db.data) return res.status(500).send({ message: "Database not initialized" });
+    
+    console.log(`[Log] User ${user.userId} fetched their messages.`);
+  
+    const messages = db.data.messages.filter(m => m.treeOwnerId === user.userId);
+    res.send(messages.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+  });
 
 // Get all activated users
 app.get('/api/users', async (req: Request, res: Response) => {
