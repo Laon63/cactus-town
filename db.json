@@ -1,0 +1,88 @@
+{
+  "users": [
+    {
+      "id": "oYV7rikjbgxEjjdYUKaRQ",
+      "name": "김송수",
+      "groupId": "M27d8_999wnnpir-kDied",
+      "activationToken": "qxwbGYp7RKMnODxn7RmrxpedM826NZDI",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    },
+    {
+      "id": "dWCKTHziqCOjGps8s7tic",
+      "name": "석동출",
+      "groupId": "M27d8_999wnnpir-kDied",
+      "activationToken": "KAaZNTHxIkAxuoMBiBnMsnS9n9xlfDYp",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    },
+    {
+      "id": "ZWOHUxHx7uGx-bXF0vtGj",
+      "name": "정유갱",
+      "groupId": "M27d8_999wnnpir-kDied",
+      "activationToken": "x1feI9hBCwq4YwPBWieZu6APnZ99CnRR",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    },
+    {
+      "id": "nE00mQVWL979Y8YQdNNML",
+      "name": "기마용",
+      "groupId": "M27d8_999wnnpir-kDied",
+      "activationToken": "jQ6pPHs3h9ja4hjELthJj7X4DYnfHgjk",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    },
+    {
+      "id": "slf3KZI4KBYOn40VQ_ROD",
+      "name": "민맹식",
+      "groupId": "M27d8_999wnnpir-kDied",
+      "activationToken": "iymCgN4eWyOhN1P8E6-2TdGbQSE5IboT",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    },
+    {
+      "id": "usH4CoEhuMoJMAd83skUi",
+      "name": "ㄱ",
+      "groupId": "O_2afOszTA6OXJurj0Afm",
+      "activationToken": null,
+      "is_activated": true,
+      "publicKey": "1uEmHU661XhLVy23hODU0So8PtCVXBtvBcReOxvVpUU=",
+      "encryptedPrivateKey": "moYvIJzO+SRcihjdX35osyr9Rht2yu/5pnn5RFasmjjVcpuFjykN/cfIJXSm+or0wsL6cITFkAI1tQMrwElyv8XhLhTn0h9W",
+      "passwordHash": "$2b$10$rxLLSENMjcTCiz3Y4mBFweoMTYZ9X.Ps7njlwIYSdxErMd6.00VHu"
+    },
+    {
+      "id": "RaHcKjeu54FB1PPgyKAQl",
+      "name": "ㄴ",
+      "groupId": "O_2afOszTA6OXJurj0Afm",
+      "activationToken": "ABrmZ2xbID_Ir7wUSoPHK1fmvDH4bE3_",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    },
+    {
+      "id": "peOyjBpqGH0LS19sxD8vU",
+      "name": "ㄷ",
+      "groupId": "O_2afOszTA6OXJurj0Afm",
+      "activationToken": "o8fV3wVmwGMCTU4gkdNy1kxU5SQZHqFg",
+      "is_activated": false,
+      "publicKey": null,
+      "encryptedPrivateKey": null
+    }
+  ],
+  "groups": [
+    {
+      "id": "M27d8_999wnnpir-kDied",
+      "name": "우당탕탕"
+    },
+    {
+      "id": "O_2afOszTA6OXJurj0Afm",
+      "name": "테스트"
+    }
+  ],
+  "messages": []
+}
