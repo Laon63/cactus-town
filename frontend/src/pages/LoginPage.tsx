@@ -1,16 +1,16 @@
-import React, { useState, FormEvent } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { Typography, Box, TextField, Button, Alert, Paper } from '@mui/material';
+import React, { useState, FormEvent } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Typography, Box, TextField, Button, Alert, Paper } from "@mui/material";
 
 function LoginPage() {
-  const [name, setName] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
+  const [name, setName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const { login } = useAuth();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     try {
       await login(name, password);
     } catch (err) {
@@ -26,7 +26,7 @@ function LoginPage() {
         Login
       </Typography>
       <Paper elevation={3} sx={{ p: 3 }}>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <TextField
             label="Your Name"
             variant="outlined"

@@ -1,16 +1,16 @@
-import React, { useState, useEffect, FormEvent } from 'react';
-import { useParams } from 'react-router-dom';
-import nacl from 'tweetnacl';
-import naclUtil from 'tweetnacl-util';
-import { Typography, Box, TextField, Button, Alert, Paper, CircularProgress } from '@mui/material';
+import React, { useState, useEffect, FormEvent } from "react";
+import { useParams } from "react-router-dom";
+import nacl from "tweetnacl";
+import naclUtil from "tweetnacl-util";
+import { Typography, Box, TextField, Button, Alert, Paper, CircularProgress } from "@mui/material";
 
 function PublicTreePage() {
   const { userId } = useParams<{ userId: string }>();
   const [ownerPublicKey, setOwnerPublicKey] = useState<Uint8Array | null>(null);
-  const [message, setMessage] = useState<string>('');
-  const [authorName, setAuthorName] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
+  const [message, setMessage] = useState<string>("");
+  const [authorName, setAuthorName] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function PublicTreePage() {
       setLoading(true);
       try {
         const response = await fetch(`http://localhost:3001/api/users/${userId}/key`);
-        if (!response.ok) throw new Error('Could not find this user\'s tree.');
+        if (!response.ok) throw new Error("Could not find this user's tree.");
         const data = await response.json();
         setOwnerPublicKey(naclUtil.decodeBase64(data.publicKey));
       } catch (err) {
@@ -34,11 +34,11 @@ function PublicTreePage() {
 
   const handlePostMessage = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
     if (!ownerPublicKey) {
-      setError('Cannot post message: public key not loaded.');
+      setError("Cannot post message: public key not loaded.");
       return;
     }
 
@@ -61,19 +61,19 @@ function PublicTreePage() {
       const encryptedContentBase64 = naclUtil.encodeBase64(fullPayload);
 
       const response = await fetch(`http://localhost:3001/api/trees/${userId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           encryptedContent: encryptedContentBase64,
-          authorName: authorName || 'Anonymous'
+          authorName: authorName || "Anonymous"
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to post message.');
+      if (!response.ok) throw new Error("Failed to post message.");
 
-      setSuccess('Message posted successfully!');
-      setMessage('');
-      setAuthorName('');
+      setSuccess("Message posted successfully!");
+      setMessage("");
+      setAuthorName("");
 
     } catch (err) {
       if (err instanceof Error) setError(err.message);
@@ -81,7 +81,7 @@ function PublicTreePage() {
   };
 
   if (loading) {
-    return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>;
+    return <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}><CircularProgress /></Box>;
   }
 
   if (error) {
@@ -104,7 +104,7 @@ function PublicTreePage() {
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
       <Paper elevation={3} sx={{ p: 3 }}>
-        <Box component="form" onSubmit={handlePostMessage} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box component="form" onSubmit={handlePostMessage} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <TextField
             label="Your Message"
             multiline

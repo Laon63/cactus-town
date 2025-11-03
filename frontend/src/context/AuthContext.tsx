@@ -1,12 +1,12 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
-import nacl from 'tweetnacl';
-import naclUtil from 'tweetnacl-util';
-import apiClient from '../api/client';
+import React, { createContext, useState, useContext, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+import nacl from "tweetnacl";
+import naclUtil from "tweetnacl-util";
+import { LoggedInUser } from "../types";
+import apiClient from "../api/client";
 
 // --- Helper (should be identical in ActivationPage) ---
 const passwordToKey = (password: string): Uint8Array => {
-  const salt = new Uint8Array(16);
   const passwordBytes = naclUtil.decodeUTF8(password);
   return nacl.hash(passwordBytes).slice(0, 32);
 };
@@ -34,9 +34,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [decryptedSecretKey, setDecryptedSecretKey] = useState<Uint8Array | null>(null);
   const navigate = useNavigate();
 
+   
   const login = async (name: string, password: string) => {
     try {
-      const response = await apiClient.post('/login', { name, password });
+      const response = await apiClient.post("/login", { name: name, password: password });
       const data = response.data;
 
       const passwordDerivedKey = passwordToKey(password);
@@ -46,7 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       const decryptedKey = nacl.secretbox.open(encryptedSecretKey, nonce, passwordDerivedKey);
       if (!decryptedKey) {
-        throw new Error('Failed to decrypt private key. Incorrect password?');
+        throw new Error("Failed to decrypt private key. Incorrect password?");
       }
 
       setToken(data.token);
@@ -56,7 +57,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       navigate(`/cactus/${data.user.id}`);
 
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error;
     }
   };
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(null);
     setToken(null);
     setDecryptedSecretKey(null);
-    navigate('/login');
+    navigate("/login");
   };
 
   const value = { user, token, decryptedSecretKey, login, logout };
@@ -77,7 +78,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

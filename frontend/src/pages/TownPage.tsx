@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Typography, List, ListItem, ListItemText } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Typography, List, ListItem, ListItemText } from "@mui/material";
+
+import { Town, Cactus } from "../types";
 
 function TownPage() {
   const { townId } = useParams();
   const [open, setOpen] = useState(false);
-  const [cactusName, setCactusName] = useState('');
-  const [cacti, setCacti] = useState<any[]>([]);
+  const [cactusName, setCactusName] = useState("");
+  const [cacti, setCacti] = useState<Cactus[]>([]);
 
-  // In a real app, you'd fetch the town data from an API.
+  // In a real app, you"d fetch the town data from an API.
   // For now, we'll get it from localStorage.
-  const towns = JSON.parse(localStorage.getItem('towns') || '[]');
-  const town = towns.find((t: any) => t.id === townId);
+  const towns: Town[] = JSON.parse(localStorage.getItem("towns") || "[]");
+  const town = towns.find((t) => t.id === townId);
 
   useEffect(() => {
-    const allCacti = JSON.parse(localStorage.getItem('cacti') || '[]');
-    const townCacti = allCacti.filter((c: any) => c.townId === townId);
+    const allCacti: Cactus[] = JSON.parse(localStorage.getItem("cacti") || "[]");
+    const townCacti = allCacti.filter((c) => c.townId === townId);
     setCacti(townCacti);
   }, [townId]);
 
@@ -29,7 +31,7 @@ function TownPage() {
 
   const handleCreateCactus = () => {
     if (!cactusName.trim()) {
-      alert('Please enter a name for your cactus.');
+      alert("Please enter a name for your cactus.");
       return;
     }
 
@@ -38,12 +40,12 @@ function TownPage() {
     const newCactus = { id: newCactusId, name: cactusName, townId };
 
     // Store the new cactus in localStorage
-    const allCacti = JSON.parse(localStorage.getItem('cacti') || '[]');
+    const allCacti = JSON.parse(localStorage.getItem("cacti") || "[]");
     allCacti.push(newCactus);
-    localStorage.setItem('cacti', JSON.stringify(allCacti));
+    localStorage.setItem("cacti", JSON.stringify(allCacti));
 
     // For this demo, we'll also log the user in by storing their ID
-    localStorage.setItem('userId', newCactusId);
+    localStorage.setItem("userId", newCactusId);
 
     handleClose();
     // We would then likely refresh the page or update the state to show the new cactus
@@ -52,7 +54,7 @@ function TownPage() {
 
   if (!town) {
     return (
-      <Container maxWidth="sm" sx={{ my: 4, textAlign: 'center' }}>
+      <Container maxWidth="sm" sx={{ my: 4, textAlign: "center" }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Town not found
         </Typography>

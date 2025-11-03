@@ -1,4 +1,4 @@
-declare module 'tweetnacl-util' {
+declare module "tweetnacl-util" {
   const util: {
     encodeBase64(data: Uint8Array): string;
     decodeBase64(data: string): Uint8Array;

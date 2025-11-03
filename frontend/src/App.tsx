@@ -1,5 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
+import { Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -7,16 +6,7 @@ import CreateTownPage from "./pages/CreateTownPage";
 import TownPage from "./pages/TownPage";
 import CactusPage from "./pages/CactusPage";
 import "./App.css";
-import { ReactNode } from "react";
 
-// ProtectedRoute with TypeScript
-function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { token } = useAuth();
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
-  return <>{children}</>;
-}
 
 function App() {
   return (

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 
 function CreateTownPage() {
-  const [townName, setTownName] = useState('');
+  const [townName, setTownName] = useState("");
   const navigate = useNavigate();
 
   const handleCreateTown = () => {
     // Basic validation
     if (!townName.trim()) {
-      alert('Please enter a town name.');
+      alert("Please enter a town name.");
       return;
     }
 
@@ -18,9 +18,9 @@ function CreateTownPage() {
     const newTownId = Math.random().toString(36).substring(2, 9);
 
     // We can store the new town in localStorage for this demo
-    const towns = JSON.parse(localStorage.getItem('towns') || '[]');
+    const towns = JSON.parse(localStorage.getItem("towns") || "[]");
     towns.push({ id: newTownId, name: townName });
-    localStorage.setItem('towns', JSON.stringify(towns));
+    localStorage.setItem("towns", JSON.stringify(towns));
 
     // Redirect to the new town page
     navigate(`/town/${newTownId}`);
@@ -28,7 +28,7 @@ function CreateTownPage() {
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ my: 4, textAlign: 'center' }}>
+      <Box sx={{ my: 4, textAlign: "center" }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Create a New Town
         </Typography>

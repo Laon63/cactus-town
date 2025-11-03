@@ -1,20 +1,32 @@
 export interface LoggedInUser {
   id: string;
   name: string;
-  publicKey: string;
   encryptedPrivateKey: string;
 }
 
-export interface DecryptedMessage {
-  id: string;
-  treeOwnerId: string;
-  encryptedContent: string;
-  authorName: string;
-  createdAt: string;
-  decryptedContent: string; // Added after decryption
-}
-
-export interface PublicUser {
+export interface Town {
   id: string;
   name: string;
+}
+
+export interface Cactus {
+
+  id: string;
+
+  name: string;
+
+  townId: string;
+
+}
+
+
+
+export interface Message {
+
+  id: number;
+
+  text: string;
+
+  cactusId: string;
+
 }

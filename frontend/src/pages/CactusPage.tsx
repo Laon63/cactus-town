@@ -1,40 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Button, Container, TextField, Typography, List, ListItem, ListItemText, Paper } from '@mui/material';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Box, Button, Container, TextField, Typography, List, ListItem, ListItemText, Paper } from "@mui/material";
+
+import { Cactus, Message } from "../types";
 
 function CactusPage() {
   const { cactusId } = useParams();
-  const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState("");
 
   // Fetch cactus and messages from localStorage
-  const cacti = JSON.parse(localStorage.getItem('cacti') || '[]');
-  const cactus = cacti.find((c: any) => c.id === cactusId);
+  const cacti: Cactus[] = JSON.parse(localStorage.getItem("cacti") || "[]");
+  const cactus = cacti.find((c) => c.id === cactusId);
 
   useEffect(() => {
-    const allMessages = JSON.parse(localStorage.getItem('messages') || '[]');
-    const cactusMessages = allMessages.filter((m: any) => m.cactusId === cactusId);
+    const allMessages: Message[] = JSON.parse(localStorage.getItem("messages") || "[]");
+    const cactusMessages = allMessages.filter((m) => m.cactusId === cactusId);
     setMessages(cactusMessages);
   }, [cactusId]);
 
   const handleAddMessage = () => {
     if (!newMessage.trim()) {
-      alert('Please enter a message.');
+      alert("Please enter a message.");
       return;
     }
 
     const newMsg = { id: Date.now(), text: newMessage, cactusId };
-    const allMessages = JSON.parse(localStorage.getItem('messages') || '[]');
+    const allMessages = JSON.parse(localStorage.getItem("messages") || "[]");
     allMessages.push(newMsg);
-    localStorage.setItem('messages', JSON.stringify(allMessages));
+    localStorage.setItem("messages", JSON.stringify(allMessages));
 
     setMessages([...messages, newMsg]);
-    setNewMessage('');
+    setNewMessage("");
   };
 
   if (!cactus) {
     return (
-      <Container maxWidth="sm" sx={{ my: 4, textAlign: 'center' }}>
+      <Container maxWidth="sm" sx={{ my: 4, textAlign: "center" }}>
         <Typography variant="h4" component="h1" gutterBottom>
           Cactus not found
         </Typography>
