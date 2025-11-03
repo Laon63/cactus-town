@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
-import { LoggedInUser } from '../types';
+import apiClient from '../api/client';
 
 // --- Helper (should be identical in ActivationPage) ---
 const passwordToKey = (password: string): Uint8Array => {
@@ -36,16 +36,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const login = async (name: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:3001/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, password }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
+      const response = await apiClient.post('/login', { name, password });
+      const data = response.data;
 
       const passwordDerivedKey = passwordToKey(password);
       const fullEncryptedKey = naclUtil.decodeBase64(data.user.encryptedPrivateKey);
@@ -61,7 +53,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(data.user);
       setDecryptedSecretKey(decryptedKey);
 
-      navigate(`/guestbook/${data.user.id}`);
+      navigate(`/cactus/${data.user.id}`);
 
     } catch (error) {
       console.error('Login error:', error);
