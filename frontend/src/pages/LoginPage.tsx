@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { Typography, Box, TextField, Button, Alert, Paper } from '@mui/material';
 
 function LoginPage() {
   const [name, setName] = useState<string>('');
@@ -12,7 +13,6 @@ function LoginPage() {
     setError('');
     try {
       await login(name, password);
-      // Navigation is handled inside the login function in AuthContext
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -21,27 +21,36 @@ function LoginPage() {
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter your name"
-          required
-        /><br />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Enter your password"
-          required
-        /><br />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+    <Box>
+      <Typography variant="h4" component="h2" gutterBottom>
+        Login
+      </Typography>
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            label="Your Name"
+            variant="outlined"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            fullWidth
+          />
+          <TextField
+            type="password"
+            label="Password"
+            variant="outlined"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            fullWidth
+          />
+          <Button type="submit" variant="contained" color="primary">
+            Login
+          </Button>
+        </Box>
+      </Paper>
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+    </Box>
   );
 }
 

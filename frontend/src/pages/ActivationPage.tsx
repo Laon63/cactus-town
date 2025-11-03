@@ -2,6 +2,7 @@ import React, { useState, FormEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
+import { Typography, Box, TextField, Button, Alert, Paper } from '@mui/material';
 
 // Helper function to derive a key from a password (simple example)
 const passwordToKey = (password: string): Uint8Array => {
@@ -72,33 +73,45 @@ function ActivationPage() {
   };
 
   return (
-    <div>
-      <h2>Account Activation</h2>
-      <p>Create a password to activate your account.</p>
+    <Box>
+      <Typography variant="h4" component="h2" gutterBottom>
+        Account Activation
+      </Typography>
+      <Typography variant="body1" paragraph>
+        Create a password to activate your account.
+      </Typography>
       
-      {!success && (
-        <form onSubmit={handleActivate}>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter password (min 8 characters)"
-            required
-          /><br />
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="Confirm password"
-            required
-          /><br />
-          <button type="submit">Activate Account</button>
-        </form>
-      )}
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-    </div>
+      {!success && (
+        <Paper elevation={3} sx={{ p: 3 }}>
+          <Box component="form" onSubmit={handleActivate} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              type="password"
+              label="Password (min 8 characters)"
+              variant="outlined"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              fullWidth
+            />
+            <TextField
+              type="password"
+              label="Confirm Password"
+              variant="outlined"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              fullWidth
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Activate Account
+            </Button>
+          </Box>
+        </Paper>
+      )}
+    </Box>
   );
 }
 

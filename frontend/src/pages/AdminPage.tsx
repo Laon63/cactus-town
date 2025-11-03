@@ -1,4 +1,5 @@
 import React, { useState, FormEvent } from 'react';
+import { Typography, Box, TextField, Button, Alert, List, ListItem, ListItemText, Paper } from '@mui/material';
 
 interface CreatedGroup {
   id: string;
@@ -30,6 +31,7 @@ function AdminPage() {
       if (!response.ok) throw new Error('Group creation failed');
       const group: CreatedGroup = await response.json();
       setCreatedGroup(group);
+      setGroupName(''); // Clear input after creation
     } catch (err) {
       if (err instanceof Error) setError(err.message);
     }
@@ -44,6 +46,10 @@ function AdminPage() {
     }
     try {
       const names = memberNames.split('\n').filter(name => name.trim() !== '');
+      if (names.length === 0) {
+        setError('Please enter at least one member name.');
+        return;
+      }
       const response = await fetch(`http://localhost:3001/api/groups/${createdGroup.id}/members`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,61 +58,98 @@ function AdminPage() {
       if (!response.ok) throw new Error('Adding members failed');
       const links: ActivationLink[] = await response.json();
       setActivationLinks(links);
+      setMemberNames(''); // Clear input after adding members
     } catch (err) {
       if (err instanceof Error) setError(err.message);
     }
   };
 
   return (
-    <div>
-      <h2>Group & Member Management</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <Box>
+      <Typography variant="h4" component="h2" gutterBottom>
+        Group & Member Management
+      </Typography>
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       {!createdGroup ? (
-        <form onSubmit={handleCreateGroup}>
-          <h3>1. Create a Group</h3>
-          <input
-            type="text"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            placeholder="Enter group name"
-            required
-          />
-          <button type="submit">Create Group</button>
-        </form>
+        <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+          <Typography variant="h5" component="h3" gutterBottom>
+            1. Create a Group
+          </Typography>
+          <Box component="form" onSubmit={handleCreateGroup} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              label="Group Name"
+              variant="outlined"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              required
+              fullWidth
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Create Group
+            </Button>
+          </Box>
+        </Paper>
       ) : (
-        <div>
-          <h3>Group '{createdGroup.name}' Created!</h3>
-          <form onSubmit={handleAddMembers}>
-            <h3>2. Add Members</h3>
-            <p>Enter one member name per line.</p>
-            <textarea
+        <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
+          <Typography variant="h5" component="h3" gutterBottom>
+            Group '{createdGroup.name}' Created!
+          </Typography>
+          <Typography variant="h5" component="h3" gutterBottom>
+            2. Add Members
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Enter one member name per line.
+          </Typography>
+          <Box component="form" onSubmit={handleAddMembers} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
+              label="Member Names"
+              multiline
+              rows={5}
+              variant="outlined"
               value={memberNames}
               onChange={(e) => setMemberNames(e.target.value)}
               placeholder="Alice\nBob\nCharlie"
-              rows="5"
               required
+              fullWidth
             />
-            <br />
-            <button type="submit">Add Members & Generate Links</button>
-          </form>
-        </div>
+            <Button type="submit" variant="contained" color="primary">
+              Add Members & Generate Links
+            </Button>
+          </Box>
+        </Paper>
       )}
 
       {activationLinks.length > 0 && (
-        <div>
-          <h3>3. Share Activation Links</h3>
-          <p>Copy these links and send them to the respective members.</p>
-          <ul>
+        <Paper elevation={3} sx={{ p: 3 }}>
+          <Typography variant="h5" component="h3" gutterBottom>
+            3. Share Activation Links
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            Copy these links and send them to the respective members.
+          </Typography>
+          <List>
             {activationLinks.map((item, index) => (
-              <li key={index}>
-                <strong>{item.name}:</strong> <input type="text" readOnly value={item.link} size={60} />
-              </li>
+              <ListItem key={index} disablePadding>
+                <ListItemText 
+                  primary={<strong>{item.name}:</strong>}
+                  secondary={
+                    <TextField
+                      value={item.link}
+                      fullWidth
+                      variant="outlined"
+                      size="small"
+                      InputProps={{ readOnly: true }}
+                      sx={{ mt: 1 }}
+                    />
+                  }
+                />
+              </ListItem>
             ))}
-          </ul>
-        </div>
+          </List>
+        </Paper>
       )}
-    </div>
+    </Box>
   );
 }
 

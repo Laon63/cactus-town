@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import Layout from './components/Layout'; // Import the new Layout
 import HomePage from './pages/HomePage';
 import AdminPage from './pages/AdminPage';
 import LoginPage from './pages/LoginPage';
@@ -20,24 +21,24 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
 
 function App() {
   return (
-    <div className="App">
-      <h1>Cactus Town Guestbook</h1>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/activate/:token" element={<ActivationPage />} />
-        <Route path="/tree/:userId" element={<PublicTreePage />} />
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/* All pages now render inside the Layout's <Outlet> */}
+        <Route index element={<HomePage />} />
+        <Route path="admin" element={<AdminPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="activate/:token" element={<ActivationPage />} />
+        <Route path="tree/:userId" element={<PublicTreePage />} />
         <Route 
-          path="/guestbook/:userId" 
+          path="guestbook/:userId" 
           element={
             <ProtectedRoute>
               <GuestbookPage />
             </ProtectedRoute>
           }
         />
-      </Routes>
-    </div>
+      </Route>
+    </Routes>
   );
 }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import { Typography, Box, List, ListItem, ListItemText, Alert, Link } from '@mui/material';
 import { PublicUser } from '../types';
 
 function HomePage() {
@@ -23,35 +24,47 @@ function HomePage() {
   }, []);
 
   return (
-    <div>
-      <h2>Welcome to Cactus Town!</h2>
-      <p>What would you like to do?</p>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/admin">Create a new group and invite members</Link>
-          </li>
-          <li>
-            <Link to="/login">Login to view your guestbook</Link>
-          </li>
-        </ul>
-      </nav>
+    <Box>
+      <Typography variant="h4" component="h2" gutterBottom>
+        Welcome to Cactus Town!
+      </Typography>
+      <Typography variant="body1" paragraph>
+        What would you like to do?
+      </Typography>
+      <Box component="nav" sx={{ mb: 4 }}>
+        <List>
+          <ListItem disablePadding>
+            <Link component={RouterLink} to="/admin" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <ListItemText primary="Create a new group and invite members" />
+            </Link>
+          </ListItem>
+          <ListItem disablePadding>
+            <Link component={RouterLink} to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <ListItemText primary="Login to view your guestbook" />
+            </Link>
+          </ListItem>
+        </List>
+      </Box>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       {users.length > 0 && (
-        <div>
-          <h3>Visit a Tree:</h3>
-          <ul>
+        <Box>
+          <Typography variant="h5" component="h3" gutterBottom>
+            Visit a Tree:
+          </Typography>
+          <List>
             {users.map(user => (
-              <li key={user.id}>
-                <Link to={`/tree/${user.id}`}>{user.name}'s Tree</Link>
-              </li>
+              <ListItem key={user.id} disablePadding>
+                <Link component={RouterLink} to={`/tree/${user.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <ListItemText primary={`${user.name}'s Tree`} />
+                </Link>
+              </ListItem>
             ))}
-          </ul>
-        </div>
+          </List>
+        </Box>
       )}
-    </div>
+    </Box>
   );
 }
 

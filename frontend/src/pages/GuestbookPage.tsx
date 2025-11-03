@@ -3,16 +3,22 @@ import { useAuth } from '../context/AuthContext';
 import nacl from 'tweetnacl';
 import naclUtil from 'tweetnacl-util';
 import { DecryptedMessage } from '../types';
+import { Typography, Box, Button, Alert, Paper, CircularProgress } from '@mui/material';
 
 function GuestbookPage() {
   const { user, token, decryptedSecretKey, logout } = useAuth();
   const [messages, setMessages] = useState<DecryptedMessage[]>([]);
   const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchMessages = async () => {
-      if (!token || !user || !decryptedSecretKey) return;
+      if (!token || !user || !decryptedSecretKey) {
+        setLoading(false);
+        return;
+      }
 
+      setLoading(true);
       try {
         const response = await fetch('http://localhost:3001/api/guestbook/messages', {
           headers: {
@@ -30,7 +36,6 @@ function GuestbookPage() {
           try {
             const fullPayload = naclUtil.decodeBase64(msg.encryptedContent);
 
-            // Extract the ephemeral public key, nonce, and message
             const ephemeralPublicKey = fullPayload.slice(0, nacl.box.publicKeyLength);
             const nonce = fullPayload.slice(nacl.box.publicKeyLength, nacl.box.publicKeyLength + nacl.box.nonceLength);
             const encryptedContentBytes = fullPayload.slice(nacl.box.publicKeyLength + nacl.box.nonceLength);
@@ -55,6 +60,8 @@ function GuestbookPage() {
 
       } catch (err) {
         if (err instanceof Error) setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -62,25 +69,39 @@ function GuestbookPage() {
   }, [token, user, decryptedSecretKey]);
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>{user ? `${user.name}'s Guestbook` : 'Guestbook'}</h2>
-        <button onClick={logout}>Logout</button>
-      </div>
+    <Box>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Typography variant="h4" component="h2">
+          {user ? `${user.name}'s Guestbook` : 'Guestbook'}
+        </Typography>
+        <Button variant="outlined" color="secondary" onClick={logout}>
+          Logout
+        </Button>
+      </Box>
       
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-      <div>
-        <h3>Messages for you:</h3>
-        {messages.length === 0 && <p>No messages yet.</p>}
-        {messages.map(msg => (
-          <div key={msg.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-            <p>{msg.decryptedContent}</p>
-            <small>From: {msg.authorName} on {new Date(msg.createdAt).toLocaleString()}</small>
-          </div>
-        ))}
-      </div>
-    </div>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}><CircularProgress /></Box>
+      ) : (
+        <Box>
+          <Typography variant="h5" component="h3" gutterBottom>
+            Messages for you:
+          </Typography>
+          {messages.length === 0 && <Typography variant="body1">No messages yet.</Typography>}
+          {messages.map(msg => (
+            <Paper key={msg.id} elevation={2} sx={{ p: 2, mb: 2 }}>
+              <Typography variant="body1" paragraph>
+                {msg.decryptedContent}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                From: {msg.authorName} on {new Date(msg.createdAt).toLocaleString()}
+              </Typography>
+            </Paper>
+          ))}
+        </Box>
+      )}
+    </Box>
   );
 }
 
